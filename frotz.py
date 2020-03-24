@@ -24,37 +24,29 @@
 
 import os
 import sys
-
+import gi
+gi.require_version('Gtk','3.0')
+gi.require_version('Gdk','3.0')
+gi.require_version('Vte','2.91')
 import logging
 from gettext import gettext as _
 
-import gtk
-import gobject
+from gi.repository import Gtk,GLib,Vte,Gdk
 import dbus
 
-from sugar.activity import activity
-from sugar.activity import activityfactory
-from sugar import env
-from sugar.graphics.toolbutton import ToolButton
-from sugar.graphics.palette import Palette
-import ConfigParser
+from sugar3.activity import activity
+from sugar3.activity import activityfactory
+from sugar3 import env
+from sugar3.graphics.toolbutton import ToolButton
+from sugar3.graphics.toolbox import Toolbox
+from sugar3.activity.widgets import EditToolbar
+from sugar3.graphics.palette import Palette
+import configparser
 import os.path
-import pango
+from gi.repository import Pango
 
 import platform, sys
 from ctypes import cdll
-
-if platform.machine().startswith('arm'):
-    pass # FIXME
-else:
-    if platform.architecture()[0] == '64bit':
-        vte_path = "x86-64"
-    else:
-        vte_path = "x86"
-    vte = cdll.LoadLibrary("lib/%s/libvte.so.9" % vte_path)
-    sys.path.append("lib/%s" % vte_path)
-
-import vte
 
 class FrotzActivity(activity.Activity):
 
@@ -66,9 +58,9 @@ class FrotzActivity(activity.Activity):
         self.set_title(_('Frotz'))
         self.connect('key-press-event', self.__key_press_cb)
 
-        toolbox = activity.ActivityToolbox(self)
+        toolbox = Toolbox()
 
-        self._edit_toolbar = activity.EditToolbar()
+        self._edit_toolbar = EditToolbar()
         toolbox.add_toolbar(_('Edit'), self._edit_toolbar)
         self._edit_toolbar.show()
         self._edit_toolbar.undo.props.visible = False
@@ -91,13 +83,13 @@ class FrotzActivity(activity.Activity):
         self.set_toolbox(toolbox)
         toolbox.show()
         
-        box = gtk.HBox(False, 4)
+        box = Gtk.HBox(False, 4)
 
         self._vte = VTE()
         self._vte.show()
         self._vte.connect("child-exited", self._quit_cb)
 
-        scrollbar = gtk.VScrollbar(self._vte.get_adjustment())
+        scrollbar = Gtk.VScrollbar(self._vte.get_adjustment())
         scrollbar.show()
 
         box.pack_start(self._vte)
@@ -112,10 +104,10 @@ class FrotzActivity(activity.Activity):
         default_game_file = os.path.join(activity.get_bundle_path(), "Advent.z5")
         # when we return to the idle state, launch the default game
         # if read_file is called, that will override this
-        gobject.idle_add(self.start_game, default_game_file)
+        GLib.idle_add(self.start_game, default_game_file)
     
     def _quit_cb(self, foo=None):
-        print "Quitting..."
+        print("Quitting...")
         sys.exit(0)
     
     def start_game(self, game_file):
@@ -143,10 +135,10 @@ class FrotzActivity(activity.Activity):
 
     def open_url(self, url):
         """Ask the journal to open an URL for us."""
-        from sugar import profile
+        from sugar3 import profile
         from shutil import rmtree
-        from sugar.datastore import datastore
-        from sugar.activity.activity import show_object_in_journal
+        from sugar3.datastore import datastore
+        from sugar3.activity.activity import show_object_in_journal
         from tempfile import mkdtemp
         tmpfolder = mkdtemp('.tmp', 'url', os.path.join(self.get_activity_root(), 'instance'))
         tmpfilepath = os.path.join(tmpfolder, 'url')
@@ -154,8 +146,8 @@ class FrotzActivity(activity.Activity):
             tmpfile = open(tmpfilepath, 'w')
             tmpfile.write(url)
             tmpfile.close()
-            os.chmod(tmpfolder, 0755)
-            os.chmod(tmpfilepath, 0755)
+            os.chmod(tmpfolder, 0o755)
+            os.chmod(tmpfilepath, 0o755)
             jobject = datastore.create()
             metadata = {
                 'title': url,
@@ -187,28 +179,28 @@ class FrotzActivity(activity.Activity):
         self._vte.paste_clipboard()
 
     def __key_press_cb(self, window, event):
-        if event.state & gtk.gdk.CONTROL_MASK and event.state & gtk.gdk.SHIFT_MASK:
+        if event.state & Gdk.ModifierType.CONTROL_MASK and event.state & Gdk.ModifierType.SHIFT_MASK:
         
-            if gtk.gdk.keyval_name(event.keyval) == "C":
+            if Gdk.keyval_name(event.keyval) == "C":
                 if self._vte.get_has_selection():
                     self._vte.copy_clipboard()              
                 return True
-            elif gtk.gdk.keyval_name(event.keyval) == "V":
+            elif Gdk.keyval_name(event.keyval) == "V":
                 self._vte.paste_clipboard()
                 return True
                 
         return False
 
-class VTE(vte.Terminal):
+class VTE(Vte.Terminal):
     def __init__(self):
-        vte.Terminal.__init__(self)
+        Vte.Terminal.__init__(self)
         self._configure_vte()
 
         #os.chdir(os.environ["HOME"])
         self.fork_command()
 
     def _configure_vte(self):
-        conf = ConfigParser.ConfigParser()
+        conf = configparser.ConfigParser()
         conf_file = os.path.join(env.get_profile_path(), 'terminalrc')
         
         if os.path.isfile(conf_file):
@@ -223,7 +215,7 @@ class VTE(vte.Terminal):
         else:
             font = 'Monospace 8'
             conf.set('terminal', 'font', font)
-        self.set_font(pango.FontDescription(font))
+        self.set_font(Pango.FontDescription(font))
 
         if conf.has_option('terminal', 'fg_color'):
             fg_color = conf.get('terminal', 'fg_color')
@@ -235,8 +227,8 @@ class VTE(vte.Terminal):
         else:
             bg_color = '#FFFFFF'
             conf.set('terminal', 'bg_color', bg_color)
-        self.set_colors(gtk.gdk.color_parse (fg_color),
-                            gtk.gdk.color_parse (bg_color),
+        self.set_colors(Gdk.color_parse (fg_color),
+                            Gdk.color_parse (bg_color),
                             [])
                             
         if conf.has_option('terminal', 'cursor_blink'):

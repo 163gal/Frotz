@@ -2,7 +2,7 @@
 name = Frotz
 activity_version = 3
 bundle_id = vu.lux.olpc.Frotz
-exec = sugar-activity frotz.FrotzActivity
+exec = sugar-activity3 frotz.FrotzActivity
 icon = activity-frotz
 mime_types = application/x-zmachine
 license = GPLv3+
