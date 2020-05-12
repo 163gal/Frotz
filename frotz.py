@@ -37,9 +37,10 @@ import dbus
 from sugar3.activity import activity
 from sugar3.activity import activityfactory
 from sugar3 import env
+from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.graphics.toolbox import Toolbox
-from sugar3.activity.widgets import EditToolbar
+from sugar3.activity.widgets import EditToolbar, ActivityToolbarButton, StopButton
 from sugar3.graphics.palette import Palette
 import configparser
 import os.path
@@ -58,20 +59,29 @@ class FrotzActivity(activity.Activity):
         self.set_title(_('Frotz'))
         self.connect('key-press-event', self.__key_press_cb)
 
-        toolbox = Toolbox()
-
+        self.toolbox = ToolbarBox()
+        self.activity_toolbar_button = ActivityToolbarButton(self)
         self._edit_toolbar = EditToolbar()
-        toolbox.add_toolbar(_('Edit'), self._edit_toolbar)
+        button = ToolbarButton()
+        button.set_page(self._edit_toolbar)
+        button.props.icon_name = 'toolbar-edit'
+        button.props.label = _('Edit')
+        self.toolbox.toolbar.insert(button, -1)
+        button.show()
         self._edit_toolbar.show()
-        self._edit_toolbar.undo.props.visible = False
-        self._edit_toolbar.redo.props.visible = False
-        self._edit_toolbar.separator.props.visible = False
-        self._edit_toolbar.copy.connect('clicked', self._copy_cb)
-        self._edit_toolbar.paste.connect('clicked', self._paste_cb)
 
-        activity_toolbar = toolbox.get_activity_toolbar()
-        activity_toolbar.share.props.visible = False
-        activity_toolbar.keep.props.visible = False
+        self.edit_toolbar.undo.props.visible = False
+        self.edit_toolbar.redo.props.visible = False
+        self.edit_toolbar.separator.props.visible = False
+        self._edit_toolbar.copy.connect('clicked', self.__copy_cb)
+        self.edit_toolbar.copy.props.accelerator = '<Ctrl><Shift>C'
+        self._edit_toolbar.paste.connect('clicked', self.__paste_cb)
+        self.edit_toolbar.paste.props.accelerator = '<Ctrl><Shift>V'
+
+        self.toolbox.toolbar.insert(self.activity_toolbar_button, -1)
+        self.activity_toolbar_button.show()
+        self.set_toolbar_box(self.toolbox)
+        activity_toolbar = self.toolbox.get_toolbar()
 
         # Add a button that will send you to the ifarchive to get more games
         activity_toolbar.get_games = ToolButton('activity-get-games')
@@ -79,10 +89,12 @@ class FrotzActivity(activity.Activity):
         activity_toolbar.get_games.connect('clicked', self._get_games_cb)
         activity_toolbar.insert(activity_toolbar.get_games, 2)
         activity_toolbar.get_games.show()
+        self.toolbox.show()
 
-        self.set_toolbox(toolbox)
-        toolbox.show()
-        
+        stop = StopButton(self)
+        self.get_toolbar_box().toolbar.insert(stop, -1)
+        stop.show()
+
         box = Gtk.HBox(False, 4)
 
         self._vte = VTE()
