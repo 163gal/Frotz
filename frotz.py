@@ -70,13 +70,13 @@ class FrotzActivity(activity.Activity):
         button.show()
         self._edit_toolbar.show()
 
-        self.edit_toolbar.undo.props.visible = False
-        self.edit_toolbar.redo.props.visible = False
-        self.edit_toolbar.separator.props.visible = False
-        self._edit_toolbar.copy.connect('clicked', self.__copy_cb)
-        self.edit_toolbar.copy.props.accelerator = '<Ctrl><Shift>C'
-        self._edit_toolbar.paste.connect('clicked', self.__paste_cb)
-        self.edit_toolbar.paste.props.accelerator = '<Ctrl><Shift>V'
+        self._edit_toolbar.undo.props.visible = False
+        self._edit_toolbar.redo.props.visible = False
+        self._edit_toolbar.separator.props.visible = False
+        self._edit_toolbar.copy.connect('clicked', self._copy_cb)
+        self._edit_toolbar.copy.props.accelerator = '<Ctrl><Shift>C'
+        self._edit_toolbar.paste.connect('clicked', self._paste_cb)
+        self._edit_toolbar.paste.props.accelerator = '<Ctrl><Shift>V'
 
         self.toolbox.toolbar.insert(self.activity_toolbar_button, -1)
         self.activity_toolbar_button.show()
