@@ -98,13 +98,14 @@ class FrotzActivity(activity.Activity):
         box = Gtk.HBox(False, 4)
 
         self._vte = VTE()
+        self._vte.set_encoding('utf-8')
         self._vte.show()
         self._vte.connect("child-exited", self._quit_cb)
 
-        scrollbar = Gtk.VScrollbar(self._vte.get_adjustment())
+        scrollbar = Gtk.VScrollbar(self._vte.get_vadjustment())
         scrollbar.show()
 
-        box.pack_start(self._vte)
+        box.pack_start(self._vte, True, True, 0)
         box.pack_start(scrollbar, False, False, 0)
         
         self.set_canvas(box)
@@ -136,9 +137,9 @@ class FrotzActivity(activity.Activity):
                 sys.exit(0)
             else:
                 if platform.architecture()[0] == '64bit':
-                    self._vte.feed_child("cd '%s'; clear; frotz64|head -3 ; echo '\nLoading %s...'; sleep 2; frotz64 '%s'; exit\n" % (save_dir, os.path.basename(game_file), game_file))
+                    self._vte.feed_child(("cd '%s'; clear; frotz64|head -3 ; echo '\nLoading %s...'; sleep 2; frotz64 '%s'; exit\n" % (save_dir, os.path.basename(game_file), game_file)).encode('utf-8'))
                 else:
-                    self._vte.feed_child("cd '%s'; clear; frotz32|head -3 ; echo '\nLoading %s...'; sleep 2; frotz32 '%s'; exit\n" % (save_dir, os.path.basename(game_file), game_file))
+                    self._vte.feed_child(("cd '%s'; clear; frotz32|head -3 ; echo '\nLoading %s...'; sleep 2; frotz32 '%s'; exit\n" % (save_dir, os.path.basename(game_file), game_file)).encode('utf-8'))
             
             self.game_started = True
         
@@ -208,8 +209,8 @@ class VTE(Vte.Terminal):
         Vte.Terminal.__init__(self)
         self._configure_vte()
 
-        #os.chdir(os.environ["HOME"])
-        self.fork_command()
+        # os.chdir(os.environ["HOME"])
+        # self.fork_command() FIXME
 
     def _configure_vte(self):
         conf = configparser.ConfigParser()
@@ -249,7 +250,7 @@ class VTE(Vte.Terminal):
             blink = False
             conf.set('terminal', 'cursor_blink', blink)
         
-        self.set_cursor_blinks(blink)
+        self.set_cursor_blink_mode(blink)
 
         if conf.has_option('terminal', 'bell'):
             bell = conf.getboolean('terminal', 'bell')
@@ -261,7 +262,7 @@ class VTE(Vte.Terminal):
         if conf.has_option('terminal', 'scrollback_lines'):
             scrollback_lines = conf.getint('terminal', 'scrollback_lines')
         else:
-            scrollback_lines = 1000
+            scrollback_lines = "1000"
             conf.set('terminal', 'scrollback_lines', scrollback_lines)
             
         self.set_scrollback_lines(scrollback_lines)
@@ -286,14 +287,14 @@ class VTE(Vte.Terminal):
         else:
             emulation = 'xterm'
             conf.set('terminal', 'emulation', emulation)
-        self.set_emulation(emulation)
+        # self.set_emulation(emulation) FIXME
 
         if conf.has_option('terminal', 'visible_bell'):
             visible_bell = conf.getboolean('terminal', 'visible_bell')
         else:
             visible_bell = False
             conf.set('terminal', 'visible_bell', visible_bell)
-        self.set_visible_bell(visible_bell)
+        # self.set_visible_bell(visible_bell) FIXME
         conf.write(open(conf_file, 'w'))
 
     def on_gconf_notification(self, client, cnxn_id, entry, what):
