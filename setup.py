@@ -1,4 +1,4 @@
 #!/usr/bin/python
-from sugar.activity3 import bundlebuilder
+from sugar3.activity import bundlebuilder
 bundlebuilder.start('Frotz')
 
