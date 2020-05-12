@@ -204,6 +204,13 @@ class FrotzActivity(activity.Activity):
                 
         return False
 
+
+def _to_rgba(color):
+    rgba = Gdk.RGBA()
+    rgba.parse(color)
+    return rgba
+
+
 class VTE(Vte.Terminal):
     def __init__(self):
         Vte.Terminal.__init__(self)
@@ -240,9 +247,7 @@ class VTE(Vte.Terminal):
         else:
             bg_color = '#FFFFFF'
             conf.set('terminal', 'bg_color', bg_color)
-        self.set_colors(Gdk.color_parse (fg_color),
-                            Gdk.color_parse (bg_color),
-                            [])
+        self.set_colors(_to_rgba(fg_color), _to_rgba(bg_color), [])
                             
         if conf.has_option('terminal', 'cursor_blink'):
             blink = conf.getboolean('terminal', 'cursor_blink')
