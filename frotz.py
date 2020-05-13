@@ -59,9 +59,8 @@ class FrotzActivity(activity.Activity):
 
     def __init__(self, handle):
         activity.Activity.__init__(self, handle)
-        
         logging.debug('Starting the Frotz activity')
-        
+
         self.set_title(_('Frotz'))
         self.connect('key-press-event', self.__key_press_cb)
 
@@ -260,7 +259,6 @@ class VTE(Vte.Terminal):
         else:
             blink = False
             conf.set('terminal', 'cursor_blink', blink)
-        
         self.set_cursor_blink_mode(blink)
 
         if conf.has_option('terminal', 'bell'):
@@ -300,12 +298,14 @@ class VTE(Vte.Terminal):
             conf.set('terminal', 'emulation', emulation)
         # self.set_emulation(emulation) FIXME
 
+
         if conf.has_option('terminal', 'visible_bell'):
             visible_bell = conf.getboolean('terminal', 'visible_bell')
         else:
             visible_bell = False
             conf.set('terminal', 'visible_bell', visible_bell)
         # self.set_visible_bell(visible_bell) FIXME
+
         conf.write(open(conf_file, 'w'))
 
     def on_gconf_notification(self, client, cnxn_id, entry, what):
