@@ -25,14 +25,23 @@
 import os
 import sys
 import gi
-gi.require_version('Gtk','3.0')
-gi.require_version('Gdk','3.0')
-gi.require_version('Vte','2.91')
 import logging
+import configparser
+import os.path
+import platform
+import dbus
+
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
+gi.require_version('Vte', '2.91')
+
 from gettext import gettext as _
 
-from gi.repository import Gtk,GLib,Vte,Gdk
-import dbus
+from gi.repository import Gtk
+from gi.repository import GLib
+from gi.repository import Vte
+from gi.repository import Gdk
+from gi.repository import Pango
 
 from sugar3.activity import activity
 from sugar3.activity import activityfactory
@@ -42,11 +51,7 @@ from sugar3.graphics.toolbutton import ToolButton
 from sugar3.graphics.toolbox import Toolbox
 from sugar3.activity.widgets import EditToolbar, ActivityToolbarButton, StopButton
 from sugar3.graphics.palette import Palette
-import configparser
-import os.path
-from gi.repository import Pango
 
-import platform, sys
 from ctypes import cdll
 
 class FrotzActivity(activity.Activity):
