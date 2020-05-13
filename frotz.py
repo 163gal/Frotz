@@ -259,6 +259,7 @@ class VTE(Vte.Terminal):
         else:
             blink = 'False'
             conf.set('terminal', 'cursor_blink', blink)
+        blink = Vte.CursorBlinkMode(0) if blink == 'False' else Vte.CursorBlinkMode(1)
         self.set_cursor_blink_mode(blink)
 
         if conf.has_option('terminal', 'bell'):
