@@ -275,7 +275,7 @@ class VTE(Vte.Terminal):
             scrollback_lines = '1000'
             conf.set('terminal', 'scrollback_lines', scrollback_lines)
             
-        self.set_scrollback_lines(scrollback_lines)
+        self.set_scrollback_lines(int(scrollback_lines))
         self.set_allow_bold(True)
         
         if conf.has_option('terminal', 'scroll_on_keystroke'):
