@@ -54,6 +54,7 @@ from sugar3.graphics.palette import Palette
 
 from ctypes import cdll
 
+
 class FrotzActivity(activity.Activity):
 
     def __init__(self, handle):
