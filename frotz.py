@@ -257,14 +257,14 @@ class VTE(Vte.Terminal):
         if conf.has_option('terminal', 'cursor_blink'):
             blink = conf.getboolean('terminal', 'cursor_blink')
         else:
-            blink = False
+            blink = 'False'
             conf.set('terminal', 'cursor_blink', blink)
         self.set_cursor_blink_mode(blink)
 
         if conf.has_option('terminal', 'bell'):
             bell = conf.getboolean('terminal', 'bell')
         else:
-            bell = False
+            bell = 'False'
             conf.set('terminal', 'bell', bell)
         self.set_audible_bell(bell)
         
@@ -280,14 +280,14 @@ class VTE(Vte.Terminal):
         if conf.has_option('terminal', 'scroll_on_keystroke'):
             scroll_key = conf.getboolean('terminal', 'scroll_on_keystroke')
         else:
-            scroll_key = False
+            scroll_key = 'False'
             conf.set('terminal', 'scroll_on_keystroke', scroll_key)
         self.set_scroll_on_keystroke(scroll_key)
 
         if conf.has_option('terminal', 'scroll_on_output'):
             scroll_output = conf.getboolean('terminal', 'scroll_on_output')
         else:
-            scroll_output = False
+            scroll_output = 'False'
             conf.set('terminal', 'scroll_on_output', scroll_output)
         self.set_scroll_on_output(scroll_output)
         
@@ -302,7 +302,7 @@ class VTE(Vte.Terminal):
         if conf.has_option('terminal', 'visible_bell'):
             visible_bell = conf.getboolean('terminal', 'visible_bell')
         else:
-            visible_bell = False
+            visible_bell = 'False'
             conf.set('terminal', 'visible_bell', visible_bell)
         # self.set_visible_bell(visible_bell) FIXME
 
