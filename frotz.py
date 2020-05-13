@@ -308,7 +308,8 @@ class VTE(Vte.Terminal):
         else:
             visible_bell = 'False'
             conf.set('terminal', 'visible_bell', visible_bell)
-        # self.set_visible_bell(visible_bell) FIXME
+        if hasattr(self, 'set_visible_bell'):
+            self.set_visible_bell(visible_bell)
 
         conf.write(open(conf_file, 'w'))
 
