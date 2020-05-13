@@ -297,8 +297,11 @@ class VTE(Vte.Terminal):
         else:
             emulation = 'xterm'
             conf.set('terminal', 'emulation', emulation)
-        # self.set_emulation(emulation) FIXME
 
+        if hasattr(self, 'set_emulation'):
+            # set_emulation is not available after vte commit
+            # 4e253be9282829f594c8a55ca08d1299e80e471d
+            self.set_emulation(emulation)
 
         if conf.has_option('terminal', 'visible_bell'):
             visible_bell = conf.getboolean('terminal', 'visible_bell')
