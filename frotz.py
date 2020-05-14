@@ -242,9 +242,20 @@ class VTE(Vte.Terminal):
     def __init__(self):
         Vte.Terminal.__init__(self)
         self._configure_vte()
-
-        # os.chdir(os.environ["HOME"])
-        # self.fork_command() FIXME
+        __working_directory = os.environ["HOME"]
+        __pty_flags = Vte.PtyFlags(0)
+        __spawn_flags = GLib.SpawnFlags(0)
+        os.chdir(__working_directory)
+        self.spawn_sync(
+            pty_flags=__pty_flags,
+            working_directory=__working_directory,
+            argv=[],
+            envv=None,
+            spawn_flags=__spawn_flags,
+            child_setup=None,
+            child_setup_data=None,
+            cancellable=None
+        )
 
     def _configure_vte(self):
         conf = configparser.ConfigParser()
