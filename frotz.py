@@ -142,9 +142,31 @@ class FrotzActivity(activity.Activity):
                 sys.exit(0)
             else:
                 if platform.architecture()[0] == '64bit':
-                    self._vte.feed_child(("cd '%s'; clear; frotz64|head -3 ; echo '\nLoading %s...'; sleep 2; frotz64 '%s'; exit\n" % (save_dir, os.path.basename(game_file), game_file)).encode('utf-8'))
+                    self._vte.feed_child(
+                        (
+                                "cd '%s'; "
+                                "clear; "
+                                "frotz64|head -3 ; "
+                                "echo '\nLoading %s...'; "
+                                "sleep 2; frotz64 '%s'; "
+                                "exit\n" % (
+                            save_dir,
+                            os.path.basename(game_file),
+                            game_file)).encode('utf-8')
+                    )
                 else:
-                    self._vte.feed_child(("cd '%s'; clear; frotz32|head -3 ; echo '\nLoading %s...'; sleep 2; frotz32 '%s'; exit\n" % (save_dir, os.path.basename(game_file), game_file)).encode('utf-8'))
+                    self._vte.feed_child(
+                        (
+                                "cd '%s'; "
+                                "clear; "
+                                "frotz32|head -3 ; "
+                                "echo '\nLoading %s...'; "
+                                "sleep 2; frotz32 '%s'; "
+                                "exit\n" % (
+                            save_dir,
+                            os.path.basename(game_file),
+                            game_file)).encode('utf-8')
+                    )
             
             self.game_started = True
         
