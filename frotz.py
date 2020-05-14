@@ -246,15 +246,16 @@ class VTE(Vte.Terminal):
         __pty_flags = Vte.PtyFlags(0)
         __spawn_flags = GLib.SpawnFlags(0)
         os.chdir(__working_directory)
-        self.spawn_sync(
-            pty_flags=__pty_flags,
-            working_directory=__working_directory,
-            argv=[],
-            envv=None,
-            spawn_flags=__spawn_flags,
-            child_setup=None,
-            child_setup_data=None,
-            cancellable=None
+        self.spawn_async(
+            __pty_flags,
+            __working_directory,
+            [],
+            None,
+            __spawn_flags,
+            None,
+            None,
+            3000,
+            None
         )
 
     def _configure_vte(self):
