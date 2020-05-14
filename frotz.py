@@ -206,7 +206,7 @@ class FrotzActivity(activity.Activity):
             elif Gdk.keyval_name(event.keyval) == "V":
                 self._vte.paste_clipboard()
                 return True
-                
+
         return False
 
 
@@ -227,7 +227,7 @@ class VTE(Vte.Terminal):
     def _configure_vte(self):
         conf = configparser.ConfigParser()
         conf_file = os.path.join(env.get_profile_path(), 'terminalrc')
-        
+
         if os.path.isfile(conf_file):
             f = open(conf_file, 'r')
             conf.readfp(f)
