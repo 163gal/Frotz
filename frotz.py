@@ -138,7 +138,7 @@ class FrotzActivity(activity.Activity):
                     (
                             "cd '%s'; "
                             "clear; "
-                            "frotz64|head -3 ; "
+                            "frotz|head -3 ; "
                             "echo '\nLoading %s...'; "
                             "sleep 2; frotz '%s'; "
                             "exit\n" % (
