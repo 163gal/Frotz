@@ -131,37 +131,34 @@ class FrotzActivity(activity.Activity):
             # print a welcome banner and pause for a moment
             # that way the end user will have a chance to see which version of frotz we are using
             # and which file we are loading
-
-            if platform.machine().startswith('arm'):
-                logging.error('ARM not supported, yet') # FIXME
-                sys.exit(0)
+            cmd = '/usr/games/frotz'
+            if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
+                logging.debug('Using frotz installed in the system')
+                self._vte.feed_child(
+                    (
+                            "cd '%s'; "
+                            "clear; "
+                            "frotz64|head -3 ; "
+                            "echo '\nLoading %s...'; "
+                            "sleep 2; frotz '%s'; "
+                            "exit\n" % (
+                                save_dir,
+                                os.path.basename(game_file),
+                                game_file)).encode('utf-8')
+                )
             else:
-                if platform.architecture()[0] == '64bit':
-                    self._vte.feed_child(
-                        (
-                                "cd '%s'; "
-                                "clear; "
-                                "frotz64|head -3 ; "
-                                "echo '\nLoading %s...'; "
-                                "sleep 2; frotz64 '%s'; "
-                                "exit\n" % (
-                            save_dir,
-                            os.path.basename(game_file),
-                            game_file)).encode('utf-8')
-                    )
-                else:
-                    self._vte.feed_child(
-                        (
-                                "cd '%s'; "
-                                "clear; "
-                                "frotz32|head -3 ; "
-                                "echo '\nLoading %s...'; "
-                                "sleep 2; frotz32 '%s'; "
-                                "exit\n" % (
-                            save_dir,
-                            os.path.basename(game_file),
-                            game_file)).encode('utf-8')
-                    )
+                dialog = Gtk.MessageDialog(
+                    transient_for=self,
+                    flags=0,
+                    message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    text="frotz is not installed"
+                )
+                dialog.format_secondary_text(
+                    "Please Install frotz , follow README"
+                )
+                dialog.run()
+                dialog.destroy()
             
             self.game_started = True
         
