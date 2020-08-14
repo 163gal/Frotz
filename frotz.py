@@ -22,14 +22,14 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Frotz.activity.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
-import gi
-import logging
 import configparser
+import logging
+import os
 import os.path
 import platform
-import dbus
+import sys
+
+import gi
 
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
@@ -44,15 +44,10 @@ from gi.repository import Gdk
 from gi.repository import Pango
 
 from sugar3.activity import activity
-from sugar3.activity import activityfactory
 from sugar3 import env
 from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
-from sugar3.graphics.toolbox import Toolbox
 from sugar3.activity.widgets import EditToolbar, ActivityToolbarButton, StopButton
-from sugar3.graphics.palette import Palette
-
-from ctypes import cdll
 
 
 class FrotzActivity(activity.Activity):
