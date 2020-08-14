@@ -224,45 +224,38 @@ class FrotzActivity(activity.Activity):
         return False
 
 
-def _to_rgba(color):
-    rgba = Gdk.RGBA()
-    rgba.parse(color)
-    return rgba
-
-
 class VTE(Vte.Terminal):
+
     def __init__(self):
         Vte.Terminal.__init__(self)
-        self._configure_vte()
-        __working_directory = os.environ["HOME"]
-        __pty_flags = Vte.PtyFlags(0)
-        __spawn_flags = GLib.SpawnFlags(0)
-        os.chdir(__working_directory)
-        if hasattr(self, 'spawn_sync'):
-            self.spawn_sync(
-                pty_flags=__pty_flags,
-                working_directory=__working_directory,
-                argv=[],
-                envv=None,
-                spawn_flags=__spawn_flags,
-                child_setup=None,
-                child_setup_data=None,
-                cancellable=None
-            )
-        else:
-            self.spawn_async(
-                __pty_flags,
-                __working_directory,
-                [],
-                None,
-                __spawn_flags,
-                None,
-                None,
-                3000,
-                None
-            )
+        self.configure_terminal()
 
-    def _configure_vte(self):
+        os.chdir(os.environ["HOME"])
+        if hasattr(Vte.Terminal, "spawn_sync"):
+            self.spawn_sync(
+                Vte.PtyFlags.DEFAULT,
+                os.environ["HOME"],
+                ["/bin/bash"],
+                [],
+                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+                None,
+                None)
+        else:
+            self.fork_command_full(
+                Vte.PtyFlags.DEFAULT,
+                os.environ["HOME"],
+                ["/bin/bash"],
+                [],
+                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+                None,
+                None)
+
+    def color_parse(self, color):
+        rgba = Gdk.RGBA()
+        rgba.parse(color)
+        return rgba
+
+    def configure_terminal(self):
         conf = configparser.ConfigParser()
         conf_file = os.path.join(env.get_profile_path(), 'terminalrc')
 
@@ -290,8 +283,10 @@ class VTE(Vte.Terminal):
         else:
             bg_color = '#FFFFFF'
             conf.set('terminal', 'bg_color', bg_color)
-        self.set_colors(_to_rgba(fg_color), _to_rgba(bg_color), [])
-                            
+
+        self.set_colors(self.color_parse(bg_color),
+                        self.color_parse(fg_color), [])
+
         if conf.has_option('terminal', 'cursor_blink'):
             blink = conf.getboolean('terminal', 'cursor_blink')
         else:
@@ -306,16 +301,16 @@ class VTE(Vte.Terminal):
             bell = 'False'
             conf.set('terminal', 'bell', bell)
         self.set_audible_bell(bell)
-        
+
         if conf.has_option('terminal', 'scrollback_lines'):
             scrollback_lines = conf.getint('terminal', 'scrollback_lines')
         else:
             scrollback_lines = '1000'
             conf.set('terminal', 'scrollback_lines', scrollback_lines)
-            
+
         self.set_scrollback_lines(int(scrollback_lines))
         self.set_allow_bold(True)
-        
+
         if conf.has_option('terminal', 'scroll_on_keystroke'):
             scroll_key = conf.getboolean('terminal', 'scroll_on_keystroke')
         else:
@@ -329,26 +324,22 @@ class VTE(Vte.Terminal):
             scroll_output = 'False'
             conf.set('terminal', 'scroll_on_output', scroll_output)
         self.set_scroll_on_output(scroll_output)
-        
-        if conf.has_option('terminal', 'emulation'):
-            emulation = conf.get('terminal', 'emulation')
-        else:
-            emulation = 'xterm'
-            conf.set('terminal', 'emulation', emulation)
 
         if hasattr(self, 'set_emulation'):
-            # set_emulation is not available after vte commit
-            # 4e253be9282829f594c8a55ca08d1299e80e471d
+            if conf.has_option('terminal', 'emulation'):
+                emulation = conf.get('terminal', 'emulation')
+            else:
+                emulation = 'xterm'
+                conf.set('terminal', 'emulation', emulation)
             self.set_emulation(emulation)
 
-        if conf.has_option('terminal', 'visible_bell'):
-            visible_bell = conf.getboolean('terminal', 'visible_bell')
-        else:
-            visible_bell = 'False'
-            conf.set('terminal', 'visible_bell', visible_bell)
         if hasattr(self, 'set_visible_bell'):
+            if conf.has_option('terminal', 'visible_bell'):
+                visible_bell = conf.getboolean('terminal', 'visible_bell')
+            else:
+                visible_bell = 'False'
+                conf.set('terminal', 'visible_bell', visible_bell)
             self.set_visible_bell(visible_bell)
-
         conf.write(open(conf_file, 'w'))
 
     def on_gconf_notification(self, client, cnxn_id, entry, what):
