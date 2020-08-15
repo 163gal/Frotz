@@ -6,4 +6,3 @@ exec = sugar-activity3 frotz.FrotzActivity
 icon = activity-frotz
 mime_types = application/x-zmachine
 license = GPLv3+
-host_version = 1
