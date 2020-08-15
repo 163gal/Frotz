@@ -105,8 +105,8 @@ class FrotzActivity(activity.Activity):
         scrollbar = Gtk.VScrollbar(self._vte.get_vadjustment())
         scrollbar.show()
 
-        box.pack_start(self._vte, True, True, 0)
-        box.pack_start(scrollbar, False, False, 0)
+        box.pack_start(child=self._vte, expand=True, fill=True, padding=0)
+        box.pack_start(child=scrollbar, expand=False, fill=False, padding=0)
         
         self.set_canvas(box)
         box.show()
