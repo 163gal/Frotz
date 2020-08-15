@@ -230,7 +230,7 @@ class VTE(Vte.Terminal):
         Vte.Terminal.__init__(self)
         self.configure_terminal()
 
-        os.chdir(os.environ["HOME"])
+        # os.chdir(os.environ["HOME"])
         if hasattr(Vte.Terminal, "spawn_sync"):
             self.spawn_sync(
                 Vte.PtyFlags.DEFAULT,
