@@ -190,7 +190,7 @@ class FrotzActivity(activity.Activity):
             tmpfile.write(url)
             tmpfile.close()
             os.chmod(tmpfolder, 0o755)
-            os.chmod(tmpfilepath, 0o755)
+            os.chmod(tmpfilepath, 0o644)
             jobject = datastore.create()
             metadata = {
                 'title': url,
