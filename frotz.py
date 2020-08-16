@@ -131,7 +131,10 @@ class FrotzActivity(activity.Activity):
             # print a welcome banner and pause for a moment
             # that way the end user will have a chance to see which version of frotz we are using
             # and which file we are loading
-            cmd = '/usr/games/frotz'
+            if platform.version().find("Ubuntu") > -1 or platform.version().find("Debian") > -1:
+                cmd = '/usr/games/frotz'
+            else:
+                cmd = '/usr/bin/frotz'
             if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
                 logging.debug('Using frotz installed in the system')
                 self._vte.feed_child(
