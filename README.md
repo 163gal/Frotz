@@ -1,9 +1,8 @@
 What is this?
 =============
 
-Frotz activity is a simple front end to the classic interactive fiction interpreter Frotz on the XO laptop.  Frotz activity is licensed under the GNU General Public License version 3 (see the file COPYING for details). 
-
-The actual interactive interpreter, Frotz, is licensed under the GNU General Public License version 2. You can obtain the source from here: http://frotz.homeunix.org/frotz/
+Frotz activity is a simple front end to the classic interactive fiction interpreter Frotz OF Sugar.  Frotz.activity is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
+The actual interactive interpreter, Frotz, is licensed under the GNU General Public License version 2 or any later version. You can obtain the source from here: https://davidgriffith.gitlab.io/frotz/
 
  Frotz activity is not part of the Sugar desktop, but can be added.  Please refer to;
 
@@ -15,7 +14,7 @@ Toolkit](https://github.com/sugarlabs/sugar-toolkit-gtk3), GTK+ 3, Pango, Vte an
 
 
 How to install dependencies?
-===========================================
+============================
 
 Install frotz
 
