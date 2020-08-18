@@ -119,9 +119,9 @@ class FrotzActivity(activity.Activity):
         # if read_file is called, that will override this
         GLib.idle_add(self.start_game, default_game_file)
     
-    def _quit_cb(self, foo=None):
-        print("Quitting...")
-        sys.exit(0)
+    def _quit_cb(self, vte, foo=None):
+        logging.debug("Quitting...")
+        self.close()
     
     def start_game(self, game_file):
         if not self.game_started:
