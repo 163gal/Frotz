@@ -91,8 +91,14 @@ class FrotzActivity(activity.Activity):
         activity_toolbar.get_games.show()
         self.toolbox.show()
 
+        separator = Gtk.SeparatorToolItem()
+        separator.props.draw = False
+        separator.set_expand(True)
+        self.toolbox.toolbar.insert(separator, -1)
+        separator.show()
+
         stop = StopButton(self)
-        self.get_toolbar_box().toolbar.insert(stop, -1)
+        self.toolbox.toolbar.insert(stop, -1)
         stop.show()
 
         box = Gtk.HBox(False, 4)
@@ -118,7 +124,7 @@ class FrotzActivity(activity.Activity):
         # when we return to the idle state, launch the default game
         # if read_file is called, that will override this
         GLib.idle_add(self.start_game, default_game_file)
-    
+
     def _quit_cb(self, vte, foo=None):
         logging.debug("Quitting...")
         self.close()
