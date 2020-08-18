@@ -139,15 +139,17 @@ class FrotzActivity(activity.Activity):
                 logging.debug('Using frotz installed in the system')
                 self._vte.feed_child(
                     (
-                            "cd '%s'; "
-                            "clear; "
-                            "frotz|head -3 ; "
-                            "echo '\nLoading %s...'; "
-                            "sleep 2; frotz '%s'; "
-                            "exit\n" % (
-                                save_dir,
-                                os.path.basename(game_file),
-                                game_file)).encode('utf-8')
+                        "cd '%s'; "
+                        "clear; "
+                        "frotz|head -3 ; "
+                        "echo '\nLoading %s...'; "
+                        "sleep 2; frotz '%s'; "
+                        "exit\n" % (
+                            save_dir,
+                            os.path.basename(game_file),
+                            game_file)
+
+                    ).encode('utf-8')
                 )
             else:
                 dialog = Gtk.MessageDialog(
