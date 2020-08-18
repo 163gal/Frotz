@@ -309,31 +309,31 @@ class VTE(Vte.Terminal):
         if conf.has_option('terminal', 'bell'):
             bell = conf.getboolean('terminal', 'bell')
         else:
-            bell = 'False'
-            conf.set('terminal', 'bell', bell)
+            bell = False
+            conf.set('terminal', 'bell', str(bell))
         self.set_audible_bell(bell)
 
         if conf.has_option('terminal', 'scrollback_lines'):
             scrollback_lines = conf.getint('terminal', 'scrollback_lines')
         else:
-            scrollback_lines = '1000'
-            conf.set('terminal', 'scrollback_lines', scrollback_lines)
+            scrollback_lines = 1000
+            conf.set('terminal', 'scrollback_lines', str(scrollback_lines))
 
-        self.set_scrollback_lines(int(scrollback_lines))
+        self.set_scrollback_lines(scrollback_lines)
         self.set_allow_bold(True)
 
         if conf.has_option('terminal', 'scroll_on_keystroke'):
             scroll_key = conf.getboolean('terminal', 'scroll_on_keystroke')
         else:
-            scroll_key = 'False'
-            conf.set('terminal', 'scroll_on_keystroke', scroll_key)
+            scroll_key = False
+            conf.set('terminal', 'scroll_on_keystroke', str(scroll_key))
         self.set_scroll_on_keystroke(scroll_key)
 
         if conf.has_option('terminal', 'scroll_on_output'):
             scroll_output = conf.getboolean('terminal', 'scroll_on_output')
         else:
-            scroll_output = 'False'
-            conf.set('terminal', 'scroll_on_output', scroll_output)
+            scroll_output = False
+            conf.set('terminal', 'scroll_on_output', str(scroll_output))
         self.set_scroll_on_output(scroll_output)
 
         if hasattr(self, 'set_emulation'):
@@ -348,8 +348,8 @@ class VTE(Vte.Terminal):
             if conf.has_option('terminal', 'visible_bell'):
                 visible_bell = conf.getboolean('terminal', 'visible_bell')
             else:
-                visible_bell = 'False'
-                conf.set('terminal', 'visible_bell', visible_bell)
+                visible_bell = False
+                conf.set('terminal', 'visible_bell', str(visible_bell))
             self.set_visible_bell(visible_bell)
         conf.write(open(conf_file, 'w'))
 
