@@ -48,6 +48,7 @@ from sugar3 import env
 from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import EditToolbar, ActivityToolbarButton, StopButton
+from sugar3.graphics import style
 
 
 class FrotzActivity(activity.Activity):
@@ -55,7 +56,6 @@ class FrotzActivity(activity.Activity):
     def __init__(self, handle):
         activity.Activity.__init__(self, handle)
         logging.debug('Starting the Frotz activity')
-
         self.set_title(_('Frotz'))
         self.connect('key-press-event', self.__key_press_cb)
 
@@ -287,9 +287,11 @@ class VTE(Vte.Terminal):
         if conf.has_option('terminal', 'font'):
             font = conf.get('terminal', 'font')
         else:
-            font = 'Monospace 8'
+            font = 'Monospace'
             conf.set('terminal', 'font', font)
-        self.set_font(Pango.FontDescription(font))
+        font_desc = Pango.FontDescription(font)
+        font_desc.set_size(style.FONT_SIZE * Pango.SCALE)
+        self.set_font(font_desc)
 
         if conf.has_option('terminal', 'fg_color'):
             fg_color = conf.get('terminal', 'fg_color')
