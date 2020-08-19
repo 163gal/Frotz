@@ -49,7 +49,7 @@ from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import EditToolbar, ActivityToolbarButton, StopButton
 from sugar3.graphics import style
-
+from sugar3.graphics.alert import ConfirmationAlert
 
 class FrotzActivity(activity.Activity):
 
@@ -157,29 +157,24 @@ class FrotzActivity(activity.Activity):
                     ).encode('utf-8')
                 )
             else:
-                dialog = Gtk.MessageDialog(
-                    transient_for=self,
-                    flags=0,
-                    message_type=Gtk.MessageType.INFO,
-                    buttons=Gtk.ButtonsType.OK,
-                    text="frotz is not installed"
-                )
-                dialog.format_secondary_text(
-                    "Install frotz by clicking OK and then restart the activity"
-                )
-                response = dialog.run()
-
-                if response == Gtk.ResponseType.OK:
-                    logging.debug("Installing frotz")
-                    if platform.version().find("Ubuntu") > -1 or platform.version().find("Debian") > -1:
-                        cmd = "apt install frotz"
-                    if platform.platform().find("fedora") > -1:
-                        cmd = "dnf install frotz"
-                    self._vte.feed_child(cmd.encode('utf-8'))
-                dialog.destroy()
-            
+                alert = ConfirmationAlert()
+                alert.props.title = "No module named frotz"
+                alert.props.msg = "Install frotz by clicking OK"
+                alert.connect('response', self._alert_response_cb)
+                self.add_alert(alert)
+                alert.show()
             self.game_started = True
-        
+
+    def _alert_response_cb(self, alert, response_id):
+        self.remove_alert(alert)
+        if response_id == Gtk.ResponseType.OK:
+            logging.debug("Installing frotz")
+            if platform.version().find("Ubuntu") > -1 or platform.version().find("Debian") > -1:
+                cmd = "apt install frotz"
+            if platform.platform().find("fedora") > -1:
+                cmd = "dnf install frotz"
+            self._vte.feed_child(cmd.encode('utf-8'))
+
     def read_file(self, file_path):
         self.start_game(file_path)
 
