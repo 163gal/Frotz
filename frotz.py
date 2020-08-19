@@ -166,14 +166,14 @@ class FrotzActivity(activity.Activity):
             self.game_started = True
 
     def _alert_response_cb(self, alert, response_id):
+
         self.remove_alert(alert)
         if response_id == Gtk.ResponseType.OK:
             logging.debug("Installing frotz")
             if platform.version().find("Ubuntu") > -1 or platform.version().find("Debian") > -1:
-                cmd = "apt install frotz"
+                self._vte.feed_child("sudo apt install frotz\n".encode('utf-8'))
             if platform.platform().find("fedora") > -1:
-                cmd = "dnf install frotz"
-            self._vte.feed_child(cmd.encode('utf-8'))
+                self._vte.feed_child("sudo dnf install frotz\n".encode('utf-8'))
 
     def read_file(self, file_path):
         self.start_game(file_path)
