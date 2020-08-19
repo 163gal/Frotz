@@ -154,7 +154,6 @@ class FrotzActivity(activity.Activity):
                             save_dir,
                             os.path.basename(game_file),
                             game_file)
-
                     ).encode('utf-8')
                 )
             else:
