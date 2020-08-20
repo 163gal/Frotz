@@ -162,6 +162,11 @@ class FrotzActivity(activity.Activity):
                 alert.connect('response', self._alert_response_cb)
                 self.add_alert(alert)
                 alert.show()
+                alert = ConfirmationAlert()
+                alert.props.title = "Start Game"
+                alert.connect('response', self._game_start_cb)
+                self.add_alert(alert)
+                alert.show()
             self.game_started = True
 
     def _alert_response_cb(self, alert, response_id):
@@ -173,6 +178,30 @@ class FrotzActivity(activity.Activity):
                 self._vte.feed_child("sudo apt install frotz\n".encode('utf-8'))
             if platform.platform().find("fedora") > -1:
                 self._vte.feed_child("sudo dnf install frotz\n".encode('utf-8'))
+
+    def _game_start_cb(self, alert, response_id):
+
+        save_dir = os.path.join(os.environ["SUGAR_ACTIVITY_ROOT"], "data")
+        game_file = os.path.join(activity.get_bundle_path(), "Advent.z5")
+
+        self.remove_alert(alert)
+        if response_id == Gtk.ResponseType.OK:
+            logging.debug("Starting frotz")
+            self._vte.feed_child(
+                (
+                        "cd '%s'; "
+                        "clear; "
+                        "frotz|head -3 ; "
+                        "echo '\nLoading %s...'; "
+                        "sleep 2; frotz '%s'; "
+                        "exit\n" % (
+                            save_dir,
+                            os.path.basename(game_file),
+                            game_file)
+                ).encode('utf-8')
+            )
+
+
 
     def read_file(self, file_path):
         self.start_game(file_path)
