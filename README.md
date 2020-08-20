@@ -34,7 +34,8 @@ Toolkit](https://github.com/sugarlabs/sugar-toolkit-gtk3), GTK+ 3, Pango, Vte an
 How to install dependencies?
 ============================
 
-Install frotz
+Frotz activity will try to install Frotz if it is not yet installed.
+Or you can install by hand;
 
 * Update the package index,
    - On Ubuntu/Debian systems, run
