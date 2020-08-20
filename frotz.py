@@ -52,7 +52,9 @@ class FrotzActivity(activity.Activity):
 
     def __init__(self, handle):
         activity.Activity.__init__(self, handle)
+
         logging.debug('Starting the Frotz activity')
+
         self.set_title(_('Frotz'))
         self.connect('key-press-event', self.__key_press_cb)
 
@@ -66,7 +68,6 @@ class FrotzActivity(activity.Activity):
         self.toolbox.toolbar.insert(button, -1)
         button.show()
         self._edit_toolbar.show()
-
         self._edit_toolbar.undo.props.visible = False
         self._edit_toolbar.redo.props.visible = False
         self._edit_toolbar.separator.props.visible = False
