@@ -60,6 +60,9 @@ class FrotzActivity(activity.Activity):
 
         self.toolbox = ToolbarBox()
         self.activity_toolbar_button = ActivityToolbarButton(self)
+        self.toolbox.toolbar.insert(self.activity_toolbar_button, -1)
+        self.activity_toolbar_button.show()
+
         self._edit_toolbar = EditToolbar()
         button = ToolbarButton()
         button.set_page(self._edit_toolbar)
@@ -76,8 +79,6 @@ class FrotzActivity(activity.Activity):
         self._edit_toolbar.paste.connect('clicked', self._paste_cb)
         self._edit_toolbar.paste.props.accelerator = '<Ctrl><Shift>V'
 
-        self.toolbox.toolbar.insert(self.activity_toolbar_button, -1)
-        self.activity_toolbar_button.show()
         self.set_toolbar_box(self.toolbox)
         activity_toolbar = self.toolbox.get_toolbar()
 
