@@ -28,7 +28,8 @@ Please refer to;
 * [How to use Sugar](https://help.sugarlabs.org/),
 
 Frotz activity depends on Python, [Sugar
-Toolkit](https://github.com/sugarlabs/sugar-toolkit-gtk3), GTK+ 3, Pango, Vte and frotz.
+Toolkit](https://github.com/sugarlabs/sugar-toolkit-gtk3), GTK+ 3,
+Pango, Vte and Frotz.
 
 
 How to install dependencies?
