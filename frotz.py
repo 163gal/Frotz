@@ -25,7 +25,7 @@ import os
 import os.path
 import platform
 import sys
-
+import time
 import gi
 
 gi.require_version('Gtk', '3.0')
@@ -41,7 +41,9 @@ from gi.repository import Gdk
 from gi.repository import Pango
 
 from sugar3.activity import activity
-from sugar3 import env
+from sugar3 import env, profile
+from sugar3.datastore import datastore
+from sugar3.activity.activity import launch_bundle
 from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import EditToolbar, ActivityToolbarButton, StopButton
@@ -201,48 +203,32 @@ class FrotzActivity(activity.Activity):
                 ).encode('utf-8')
             )
 
-
-
     def read_file(self, file_path):
         self.start_game(file_path)
 
-    def open_url(self, url):
-        """Ask the journal to open an URL for us."""
-        from sugar3 import profile
-        from shutil import rmtree
-        from sugar3.datastore import datastore
-        from sugar3.activity.activity import show_object_in_journal
-        from tempfile import mkdtemp
-        tmpfolder = mkdtemp('.tmp', 'url', os.path.join(self.get_activity_root(), 'instance'))
-        tmpfilepath = os.path.join(tmpfolder, 'url')
-        try:
-            tmpfile = open(tmpfilepath, 'w')
-            tmpfile.write(url)
-            tmpfile.close()
-            os.chmod(tmpfolder, 0o755)
-            os.chmod(tmpfilepath, 0o644)
-            jobject = datastore.create()
-            metadata = {
-                'title': url,
-                'title_set_by_user': '1',
-                'buddies': '',
-                'preview': '',
-                'icon-color': profile.get_color().to_string(),
-                'mime_type': 'text/uri-list',
-            }
-            for k, v in metadata.items():
-                jobject.metadata[k] = v # the dict.update method is missing =(
-            jobject.file_path = tmpfilepath
-            datastore.write(jobject)
-            show_object_in_journal(jobject.object_id)
-            jobject.destroy()
-        finally:
-            rmtree(tmpfilepath, ignore_errors=True) # clean up!
-            
     def _get_games_cb(self, button):
+
         url = 'http://wiki.laptop.org/go/Frotz/Games'
-        #activityfactory.create_with_uri('org.laptop.WebActivity', url)
-        self.open_url(url)
+        path = os.path.join(self.get_activity_root(),
+                            'instance', '%i' % time.time())
+        self.create_journal_entry(path, url)
+
+    def create_journal_entry(self, path, URL):
+        fd = open(path, "w+")
+        fd.write(URL)
+        fd.close()
+        journal_entry = datastore.create()
+        journal_entry.metadata['title'] = 'Browse Activity'
+        journal_entry.metadata['title_set_by_user'] = '1'
+        journal_entry.metadata['keep'] = '0'
+        journal_entry.metadata['mime_type'] = 'text/uri-list'
+        journal_entry.metadata['icon-color'] = profile.get_color().to_string()
+        journal_entry.metadata['description'] = \
+            "Opening {} from the frotz activity".format(URL)
+        journal_entry.file_path = path
+        datastore.write(journal_entry)
+        self._object_id = journal_entry.object_id
+        launch_bundle(object_id=self._object_id)
 
     def _copy_cb(self, button):
         if self._vte.get_has_selection():
