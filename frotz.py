@@ -180,7 +180,7 @@ class FrotzActivity(activity.Activity):
                     )
             else:
                 alert = ConfirmationAlert()
-                alert.props.title = "No module named frotz"
+                alert.props.title = "Frotz is missing"
                 alert.props.msg = "Install frotz by clicking OK"
                 alert.connect('response', self._alert_response_cb)
                 self.add_alert(alert)
