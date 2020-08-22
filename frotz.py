@@ -131,38 +131,46 @@ class FrotzActivity(activity.Activity):
         logging.debug("Quitting...")
         self.close()
 
+    def _start_frotz(self, game_file):
+        # cd to a persistent directory so that saved games
+        # will have a place to live
+        save_dir = os.path.join(
+            os.environ["SUGAR_ACTIVITY_ROOT"], "data")
+        # print a welcome banner and pause for a moment that
+        # way the end user will have a chance to see which
+        # version of frotz we are using and which file we are
+        # loading
+        cmd = "cd '%s'; " % save_dir
+        cmd += "clear; "
+        cmd += "frotz|head -3 ; "
+        cmd += "echo '\nLoading %s...'; " % os.path.basename(game_file)
+        cmd += "sleep 2; frotz '%s'; " % game_file
+        cmd += "exit\n"
+        self._vte.feed_child(cmd.encode('utf-8'))
+
     def start_game(self, game_file):
-        if not self.game_started:
-            if shutil.which('frotz'):
-                logging.debug('Using frotz installed in the system')
-                # cd to a persistent directory so that saved games
-                # will have a place to live
-                save_dir = os.path.join(
-                    os.environ["SUGAR_ACTIVITY_ROOT"], "data")
-                # print a welcome banner and pause for a moment that
-                # way the end user will have a chance to see which
-                # version of frotz we are using and which file we are
-                # loading
-                cmd = "cd '%s'; " % save_dir
-                cmd += "clear; "
-                cmd += "frotz|head -3 ; "
-                cmd += "echo '\nLoading %s...'; " % os.path.basename(game_file)
-                cmd += "sleep 2; frotz '%s'; " % game_file
-                cmd += "exit\n"
-                self._vte.feed_child(cmd.encode('utf-8'))
-            else:
-                alert = ConfirmationAlert()
-                alert.props.title = "Frotz is missing"
-                alert.props.msg = "Install frotz by clicking OK"
-                alert.connect('response', self._alert_response_cb)
-                self.add_alert(alert)
-                alert.show()
-                alert = ConfirmationAlert()
-                alert.props.title = "Start Game"
-                alert.connect('response', self._game_start_cb)
-                self.add_alert(alert)
-                alert.show()
-            self.game_started = True
+        if self.game_started:
+            return False
+
+        self.game_started = True
+
+        if not shutil.which('frotz'):
+            alert = ConfirmationAlert()
+            alert.props.title = "Frotz is missing"
+            alert.props.msg = "Install frotz by clicking OK"
+            alert.connect('response', self._alert_response_cb)
+            self.add_alert(alert)
+            alert.show()
+            alert = ConfirmationAlert()
+            alert.props.title = "Start Game"
+            alert.connect('response', self._game_start_cb)
+            self.add_alert(alert)
+            alert.show()
+            return False
+
+        logging.debug('Using frotz installed in the system')
+        self._start_frotz(game_file)
+        return False
 
     def _alert_response_cb(self, alert, response_id):
 
@@ -175,26 +183,11 @@ class FrotzActivity(activity.Activity):
                 self._vte.feed_child(b'sudo dnf install frotz\n')
 
     def _game_start_cb(self, alert, response_id):
-
-        save_dir = os.path.join(os.environ["SUGAR_ACTIVITY_ROOT"], "data")
-        game_file = os.path.join(activity.get_bundle_path(), "Advent.z5")
-
         self.remove_alert(alert)
         if response_id == Gtk.ResponseType.OK:
             logging.debug("Starting frotz")
-            self._vte.feed_child(
-                (
-                        "cd '%s'; "
-                        "clear; "
-                        "frotz|head -3 ; "
-                        "echo '\nLoading %s...'; "
-                        "sleep 2; frotz '%s'; "
-                        "exit\n" % (
-                            save_dir,
-                            os.path.basename(game_file),
-                            game_file)
-                ).encode('utf-8')
-            )
+            game_file = os.path.join(activity.get_bundle_path(), "Advent.z5")
+            self._start_frotz(game_file)
 
     def read_file(self, file_path):
         self.start_game(file_path)
