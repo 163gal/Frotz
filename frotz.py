@@ -198,9 +198,9 @@ class FrotzActivity(activity.Activity):
         if response_id == Gtk.ResponseType.OK:
             logging.debug("Installing frotz")
             if platform.version().find("Ubuntu") > -1 or platform.version().find("Debian") > -1:
-                self._vte.feed_child("sudo apt install frotz\n".encode('utf-8'))
+                self._vte.feed_child(b'sudo apt install frotz\n')
             else:
-                self._vte.feed_child("sudo dnf install frotz\n".encode('utf-8'))
+                self._vte.feed_child(b'sudo dnf install frotz\n')
 
     def _game_start_cb(self, alert, response_id):
 
