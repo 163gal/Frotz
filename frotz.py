@@ -194,7 +194,7 @@ class FrotzActivity(activity.Activity):
 
     def _get_games_cb(self, button):
 
-        url = 'http://wiki.laptop.org/go/Frotz/Games'
+        url = 'https://github.com/sugarlabs/Frotz/#downloading-games'
         path = os.path.join(self.get_activity_root(),
                             'instance', '%i' % time.time())
         self.create_journal_entry(path, url)
