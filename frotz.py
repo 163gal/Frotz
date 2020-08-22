@@ -22,6 +22,7 @@
 import configparser
 import logging
 import os
+import shutil
 import platform
 import sys
 import time
@@ -48,9 +49,6 @@ from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import EditToolbar, ActivityToolbarButton, StopButton
 from sugar3.graphics import style
 from sugar3.graphics.alert import ConfirmationAlert
-
-# gets the PATH environment variable
-PATH = os.getenv('PATH').split(os.pathsep)
 
 
 class FrotzActivity(activity.Activity):
@@ -133,51 +131,25 @@ class FrotzActivity(activity.Activity):
         logging.debug("Quitting...")
         self.close()
 
-    def get_executable_path(self, executable, raise_error=True):
-        """
-        Returns the absolute path of the executable
-        if it is found on the PATH,
-        if it is not found raises a FileNotFoundError
-        :param executable:
-        :return:
-        """
-
-        for i in PATH:
-            if os.path.exists(os.path.join(i, executable)):
-                return os.path.join(i, executable)
-        if raise_error:
-            raise FileNotFoundError(
-                "Could not find {p} on PATH. "
-                "Make sure {p} is added to path and try again".format(
-                    p=executable))
-        else:
-            return False
-
     def start_game(self, game_file):
         if not self.game_started:
-            # cd to a persistent directory
-            # so that saved games will have a place to live
-            save_dir = os.path.join(os.environ["SUGAR_ACTIVITY_ROOT"], "data")
-            # print a welcome banner and pause for a moment
-            # that way the end user will have a chance to see which version of frotz we are using
-            # and which file we are loading
-            if self.get_executable_path("frotz", raise_error=False):
-                cmd = self.get_executable_path("frotz", raise_error=False)
-                if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
-                    logging.debug('Using frotz installed in the system')
-                    self._vte.feed_child(
-                        (
-                            "cd '%s'; "
-                            "clear; "
-                            "frotz|head -3 ; "
-                            "echo '\nLoading %s...'; "
-                            "sleep 2; frotz '%s'; "
-                            "exit\n" % (
-                                save_dir,
-                                os.path.basename(game_file),
-                                game_file)
-                        ).encode('utf-8')
-                    )
+            if shutil.which('frotz'):
+                logging.debug('Using frotz installed in the system')
+                # cd to a persistent directory so that saved games
+                # will have a place to live
+                save_dir = os.path.join(
+                    os.environ["SUGAR_ACTIVITY_ROOT"], "data")
+                # print a welcome banner and pause for a moment that
+                # way the end user will have a chance to see which
+                # version of frotz we are using and which file we are
+                # loading
+                cmd = "cd '%s'; " % save_dir
+                cmd += "clear; "
+                cmd += "frotz|head -3 ; "
+                cmd += "echo '\nLoading %s...'; " % os.path.basename(game_file)
+                cmd += "sleep 2; frotz '%s'; " % game_file
+                cmd += "exit\n"
+                self._vte.feed_child(cmd.encode('utf-8'))
             else:
                 alert = ConfirmationAlert()
                 alert.props.title = "Frotz is missing"
