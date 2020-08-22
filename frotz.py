@@ -197,11 +197,8 @@ class FrotzActivity(activity.Activity):
         url = 'https://github.com/sugarlabs/Frotz/#downloading-games'
         path = os.path.join(self.get_activity_root(),
                             'instance', '%i' % time.time())
-        self.create_journal_entry(path, url)
-
-    def create_journal_entry(self, path, URL):
-        fd = open(path, "w+")
-        fd.write(URL)
+        fd = open(path, "w")
+        fd.write(url)
         fd.close()
         journal_entry = datastore.create()
         journal_entry.metadata['title'] = 'Browse Activity'
@@ -210,7 +207,7 @@ class FrotzActivity(activity.Activity):
         journal_entry.metadata['mime_type'] = 'text/uri-list'
         journal_entry.metadata['icon-color'] = profile.get_color().to_string()
         journal_entry.metadata['description'] = \
-            "Opening {} from the frotz activity".format(URL)
+            "Frotz activity, downloading games".format(url)
         journal_entry.file_path = path
         datastore.write(journal_entry)
         self._object_id = journal_entry.object_id
