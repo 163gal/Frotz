@@ -270,9 +270,8 @@ class VTE(Vte.Terminal):
         conf_file = os.path.join(env.get_profile_path(), 'terminalrc')
 
         if os.path.isfile(conf_file):
-            f = open(conf_file, 'r')
-            conf.readfp(f)
-            f.close()
+            with open(conf_file, 'r') as f:
+                conf.read_file(f) 
         else:
             conf.add_section('terminal')
 
